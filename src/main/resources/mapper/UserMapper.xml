@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.devin.mapper.UserMapper">
+
+    <!--  插入一个新用户  -->
+    <insert id="insertUser" parameterType="com.devin.entity.User">
+        insert into user
+            (id, username, password, create_time, update_time)
+        values (#{id}, #{username}, #{password}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!--  根据用户名查用户实体  -->
+    <select id="selectByName" parameterType="String" resultType="com.devin.entity.User">
+        select id, username, password, gender, version, is_deleted from user
+        where username = #{username};
+    </select>
+
+    <!--  根剧分页对象查询分页  -->
+    <select id="selectPageByRequest" resultType="com.devin.entity.User">
+        select * from user
+        <where>
+            <if test="request.username != null and request.username != '' ">
+                username = #{request.username}
+            </if>
+            and is_deleted = 0
+        </where>
+    </select>
+
+</mapper>
