@@ -16,7 +16,7 @@ public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(new ApiInfoBuilder().title("this is an api doc")
+                .apiInfo(new ApiInfoBuilder().title("API DOC")
                 .description("this is an api doc")
                 .version("1.0").build())
                 .select().apis(RequestHandlerSelectors.any())

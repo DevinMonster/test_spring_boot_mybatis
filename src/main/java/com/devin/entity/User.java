@@ -5,12 +5,10 @@ import java.util.Date;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.devin.entity.request.UserRequest;
 import com.devin.enums.GenderEnum;
+import com.devin.enums.IsDeletedEnum;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
@@ -55,12 +53,15 @@ public class User implements Serializable {
     private String password;
 
     @ApiModelProperty("性别")
-    @JSONField(serialzeFeatures= SerializerFeature.WriteEnumUsingToString)
+    @JSONField(serialzeFeatures = SerializerFeature.WriteEnumUsingToString)
+    @EnumValue
     private GenderEnum gender;
 
     @ApiModelProperty(value = "0 没删除 1 已删除	")
     @TableLogic
-    private Integer isDeleted;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteEnumUsingToString)
+    @EnumValue
+    private IsDeletedEnum isDeleted;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

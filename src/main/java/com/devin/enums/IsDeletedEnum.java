@@ -2,15 +2,14 @@ package com.devin.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum GenderEnum implements IEnum<Integer> {
-    MAN(1, "男"),
-    GIRL(0, "女");
+public enum IsDeletedEnum implements IEnum<Integer> {
+    YES(1, "禁用"),
+    NO(0, "激活");
 
     private final Integer code;
 
@@ -19,6 +18,6 @@ public enum GenderEnum implements IEnum<Integer> {
 
     @Override
     public Integer getValue() {
-        return this.code;
+        return code;
     }
 }

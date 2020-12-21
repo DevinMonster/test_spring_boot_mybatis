@@ -1,5 +1,7 @@
 package com.devin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.devin.entity.User;
 import com.devin.entity.request.UserRequest;
@@ -7,6 +9,7 @@ import com.devin.mapper.UserMapper;
 import com.devin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.devin.utils.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +22,7 @@ import javax.annotation.Resource;
  * @author devin
  * @since 2020-12-15
  */
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 

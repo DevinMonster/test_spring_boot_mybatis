@@ -2,6 +2,7 @@ package com.devin.entity.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @author devin
  */
 @Data
+@ToString
 public class UserRequest extends PageRequest implements Serializable {
 
     @ApiModelProperty(value = "id")
