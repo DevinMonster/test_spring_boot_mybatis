@@ -28,6 +28,16 @@ public class UserRequest extends PageRequest implements Serializable {
     @NotBlank(message = "密码不能为空")
     private String password;
 
+    @ApiModelProperty("确认密码")
+    @NotNull(message = "确认密码不能为空")
+    @NotBlank(message = "确认密码不能为空")
+    private String checkPassword;
+
+    @ApiModelProperty("图片")
+    @NotNull(message = "用户头像不能为空")
+    @NotBlank(message = "用户头像不能为空")
+    private String picName;
+
     @ApiModelProperty("乐观锁")
     private Integer version;
 }

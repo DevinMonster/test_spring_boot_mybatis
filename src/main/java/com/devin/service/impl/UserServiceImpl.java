@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.devin.entity.User;
 import com.devin.entity.request.UserRequest;
+import com.devin.enums.ApiEnum;
+import com.devin.exception.GlobalException;
 import com.devin.mapper.UserMapper;
 import com.devin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.devin.utils.MD5Utils;
 import com.devin.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,10 +58,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public boolean registerUser(UserRequest user) {
-        if (Utils.userLeagle(user)) {
-            Integer insert = userMapper.insert(new User(user));
-            return Utils.retBool(insert);
-        }
-        return false;
+        // 查询用户名是否存在
+        User select = userMapper.selectByName(user.getUsername());
+        if (select != null) throw new GlobalException(ApiEnum.USERNAME_REGISTED) ;
+        // 确认密码
+        if (!user.getPassword().equals(user.getCheckPassword())) throw new GlobalException(ApiEnum.PASSWORD_NOT_MATCH);
+        // md5加密
+        User ans = new User(user);
+        ans.setPassword(MD5Utils.encode(ans.getUsername()));
+        userMapper.insert(ans);
+        return true;
     }
 }
