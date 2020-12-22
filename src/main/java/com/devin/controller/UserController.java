@@ -1,24 +1,32 @@
 package com.devin.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.devin.dto.APIResult;
 import com.devin.dto.ResultGenerator;
 import com.devin.entity.User;
 import com.devin.entity.request.UserRequest;
+import com.devin.enums.ApiEnum;
+import com.devin.exception.GlobalException;
 import com.devin.service.IUserService;
-import com.qiniu.util.Auth;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.devin.utils.JWTUtil;
+import com.devin.utils.VerifyCode;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author devin
@@ -28,6 +36,12 @@ import java.util.List;
 @RequestMapping("/user")
 @SuppressWarnings("all")
 public class UserController {
+
+    @Resource
+    private VerifyCode vef;
+
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
 
     @Resource
     private IUserService userService;
@@ -59,32 +73,62 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @CrossOrigin
     public APIResult login(@RequestBody UserRequest request) {
+//        System.out.println(request);
         User user = userService.login(request);
-        if (user != null) return ResultGenerator.genSuccess(user);
-        return ResultGenerator.genFailed("用户名或密码错误");
+
+        // 保存用户
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", user.getId());
+        map.put("username", user.getUsername());
+        String token;
+        try {
+            token = JWTUtil.createJWT(user.getId().toString(), map, user.getUsername(), System.currentTimeMillis());
+            redisTemplate.opsForValue().set(user.getId() + "-token", token);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new GlobalException(ApiEnum.FAILED);
+        }
+        // 返回用户的登陆信息
+        Map<String, Object> tokenMap = new HashMap<>();
+        tokenMap.put("token", token);
+        tokenMap.put("tokenHead", "Authorization");
+
+        return ResultGenerator.genSuccess(tokenMap);
     }
 
     @PostMapping("/register")
+    @CrossOrigin
     public APIResult register(@RequestBody UserRequest request) {
-        if (userService.registerUser(request)) return ResultGenerator.genSuccess(request);
+        User user = userService.registerUser(request);
+        if (user != null)
+            return ResultGenerator.genSuccess(user);
+
         return ResultGenerator.genFailed("用户注册失败");
     }
 
     @PostMapping("/page")
-    public APIResult<Page<User> > page(@RequestBody UserRequest request) {
+    public APIResult<Page<User>> page(@RequestBody UserRequest request) {
         return ResultGenerator.genSuccess(userService.pageMine(request));
     }
 
-    /*public static void main(String[] args) {
-        String accessKey = "evzPrTT1qVnC1WIcOAeJ763Ar9teglDAJVavCrCQ";
-        String secretKey = "nUECECMhOHxp5ZZHiKCg50Yezn4WbZg_EtkhmBLC";
-        String bucket = "haoziweizhi1111";
+    @GetMapping("/code")
+    @CrossOrigin
+    /**
+     * 这个函数的作用是生成验证码，并将验证码存入session中
+     */
+    public APIResult getImage(HttpSession httpSession, HttpServletResponse response) throws IOException {
+        vef.createCode();
+        // 把验证码存到redis里
+        String text = vef.getCode();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        redisTemplate.opsForValue().set(uuid, text);
 
-        Auth auth = Auth.create(accessKey, secretKey);
-        String upToken = auth.uploadToken(bucket);
-        System.out.println(upToken);
-
-    }*/
-
+        String encoded = vef.bufferToBase64();
+        Map<String, Object> map = new HashMap<>();
+        map.put("encoded", encoded);
+        map.put("key", uuid);
+        return ResultGenerator.genSuccess(map);
+    }
 }

@@ -1,5 +1,8 @@
 package com.devin.utils;
 
+import com.devin.enums.ApiEnum;
+import com.devin.exception.GlobalException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -7,13 +10,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class MD5Utils {
     /**
-     * 可以把一段文字转换为MD
+     * 可以把一段文字转换为MD5
      * Can convert a file to MD5
      *
      * @param text
      * @return md5
      */
     public static String encode(String text) {
+        if (text == null) throw new GlobalException(ApiEnum.FAILED);
         try {
             MessageDigest digest = MessageDigest.getInstance("md5");
             byte[] buffer = digest.digest(text.getBytes());
@@ -81,5 +85,9 @@ public class MD5Utils {
             }
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(MD5Utils.encode("aaaa"));
     }
 }

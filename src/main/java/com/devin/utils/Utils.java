@@ -6,6 +6,7 @@ import com.devin.entity.request.UserRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Utils {
@@ -34,7 +35,7 @@ public class Utils {
     public static boolean userCheck(User user, UserRequest request) {
         return  user != null &&
                 request.getUsername().equals(user.getUsername()) &&
-                request.getPassword().equals(user.getPassword());
+                Objects.equals(MD5Utils.encode(request.getPassword()), user.getPassword());
     }
 
     public static boolean userLeagle(UserRequest user) {

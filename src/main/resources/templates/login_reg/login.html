@@ -3,8 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="./css/bootstrap.css"/>
+    <style>
+        .wrap{
+            margin: 50px auto;
+            width: 60%;
+        }
+        .text-form{
+            width: 50%;
+            display: inline;
+        }
+        #pic{
+            width: 100px;
+            height: 100px;
+        }
+    </style>
 </head>
 <body>
+    <div class="wrap">
+        <h1>登录</h1>
+        <form>
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" class="form-control" id="username"/>
+                <small id="emailHelp" class="form-text text-muted">用户名不能重复</small>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="password"/>
+                <div id="hint_password1"></div>
+            </div>
 
+            <div class="form-group">
+                <label for="verifyCode">验证码</label>
+                <div id="pic">
+                    <input type="hidden" id="key">
+                    <input type="text" class="form-control text-form" id="verifyCode"/>
+                </div>
+            </div>
+
+            <button type="button" id="submit" class="btn btn-primary">提交</button>
+        </form>
+    </div>
+    <script src="./js/jquery-3.5.1.min.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <script>
+        // 验证码
+        $.ajax({
+            url: "http://localhost:8081/user/code",
+            type: "get",
+            datatype: 'json',
+            data: '',
+            contentType: 'application/json',
+            success(data) {
+                // console.log(data);
+                $("#pic").append('<br><img class="img-thumbnail" src="' + data.data.encoded + '" />');
+                $("#key").val(data.data.key);
+            }
+        });
+        // 登录ajax
+        $("#submit").on("click", function () {
+            let username = $("#username").val(),
+                password = $("#password").val(),
+                verifyCode = $("#verifyCode").val(),
+                key = $("#key").val();
+
+            let modelJson = {
+                "username": username,
+                "password": password,
+                "verifyCode": verifyCode,
+                "key": key,
+            };
+            // 发起请求
+            $.ajax({
+                url: "http://localhost:8081/user/login",
+                type: "post",
+                datatype: 'json',
+                data: JSON.stringify(modelJson),
+                contentType: 'application/json',
+                success(data) {
+                    // console.log(data);
+                    sessionStorage.setItem("token", data.data.token);
+                    sessionStorage.setItem("tokenHead", data.data.tokenHead);
+                }
+            });
+
+        })
+    </script>
 </body>
 </html>

@@ -34,10 +34,9 @@
 
             <div class="form-group">
                 <label>头像</label>
-                <input type="file" class="form-control-file" id="file"/><br>
-                <button type="button" class="btn btn-info btn-sm" id="img_upload">上传头像</button>
+                <input type="file" class="form-control-file" id="file"/>
                 <div id="pic"></div>
-                <div type="hidden" id="picName"></div>
+                <input type="hidden" id="picName"/>
             </div>
             <button type="button" id="submit" class="btn btn-primary">提交</button>
         </form>
@@ -46,7 +45,7 @@
     <script src="./js/bootstrap.js"></script>
     <script>
         // 图片上传
-        $("#img_upload").on("click", function () {
+        $("#file").on("change", function () {
             var formData = new FormData();
             var file = $("#file")[0].files[0];
             formData.append('file', file);
@@ -83,6 +82,7 @@
             $("#hint_password1").remove();
             return true;
         }
+
         // 密码校验
         function passwordValidate() {
             var pwd1 = $("#password1").val();
@@ -111,14 +111,16 @@
         });
 
         // 注册按钮点击事件
-        $("#commit").on('click', function () {
+        $("#submit").on('click', function () {
             var username = $("#username").val();
             var password = $("#password1").val();
+            var password2 = $("#password2").val();
             var picname = $("#picName").val();
 
             var modelJson = {
                 "username": username,
                 "password": password,
+                "checkPassword": password2,
                 "picName": picname,
             };
 
@@ -129,14 +131,18 @@
                 data: JSON.stringify(modelJson),
                 contentType: 'application/json',
                 success(data) {
-
+                    let code = data.code;
+                    if (code !== 200) {
+                        alert(data.message);
+                    } else {
+                        alert("注册成功");
+                    }
                 },
                 error(data) {
                     alert("注册失败");
                 }
             });
         })
-
     </script>
 </body>
 </html>

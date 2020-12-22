@@ -132,12 +132,12 @@ public class VerifyCode {
         sos.close();
     }
 
-    public String BufferToBase64() throws IOException {
+    public String bufferToBase64() throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(buffImg, "png", os);
         byte[] bytes = os.toByteArray();
         Base64.Encoder enc = Base64.getEncoder();
-        String img = Arrays.toString(enc.encode(bytes));
+        String img = enc.encodeToString(bytes);
         os.close();
         return "data:image/png;base64," + img;
 

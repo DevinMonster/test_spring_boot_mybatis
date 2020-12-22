@@ -21,5 +21,5 @@ public interface IUserService extends IService<User> {
 
     Page<User> pageMine(UserRequest userPage);
 
-    boolean registerUser(UserRequest user);
+    User registerUser(UserRequest user);
 }
