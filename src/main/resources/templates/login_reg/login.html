@@ -63,11 +63,12 @@
         });
         // 登录ajax
         $("#submit").on("click", function () {
+            // 从输入框拿取用户名，密码，验证码
             let username = $("#username").val(),
                 password = $("#password").val(),
                 verifyCode = $("#verifyCode").val(),
                 key = $("#key").val();
-
+            // 组织成JSON对象
             let modelJson = {
                 "username": username,
                 "password": password,
@@ -83,6 +84,7 @@
                 contentType: 'application/json',
                 success(data) {
                     // console.log(data);
+                    // 请求成功后将TOKEN和请求头放入SESSION作用域
                     sessionStorage.setItem("token", data.data.token);
                     sessionStorage.setItem("tokenHead", data.data.tokenHead);
                 }

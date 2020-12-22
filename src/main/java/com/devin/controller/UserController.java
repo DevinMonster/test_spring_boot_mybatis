@@ -82,20 +82,20 @@ public class UserController {
 //        System.out.println(request);
         // 这里是通过检查的用户
         User user = userService.login(request);
-
-        // 保存用户
-        Map<String, Object> map = new HashMap<>();
-        map.put("userId", user.getId());
-        map.put("username", user.getUsername());
         String token;
         try {
+            // 保存用户
+            Map<String, Object> map = new HashMap<>();
+            map.put("userId", user.getId());
+            map.put("username", user.getUsername());
             token = JWTUtil.createJWT(user.getId().toString(), map, user.getUsername(), System.currentTimeMillis());
+            // 将token放置进redis
             redisTemplate.opsForValue().set(user.getId() + "-token", token);
         } catch (Exception e) {
             e.printStackTrace();
             throw new GlobalException(ApiEnum.FAILED);
         }
-        // 返回用户的登陆信息
+        // 返回用户的登陆信息, 也就是token和请求头
         Map<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", "Authorization");
