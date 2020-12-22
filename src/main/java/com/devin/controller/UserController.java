@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -67,8 +68,11 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public APIResult edit(@RequestBody UserRequest request) {
-        userService.updateById(new User(request));
+    public APIResult edit(@RequestBody UserRequest request, HttpServletRequest httpServletRequest) {
+        Long userId = (Long) httpServletRequest.getAttribute("userId");
+        User user = new User(request);
+        user.setId(userId);
+        userService.updateById(user);
         return ResultGenerator.genSuccess();
     }
 
@@ -76,6 +80,7 @@ public class UserController {
     @CrossOrigin
     public APIResult login(@RequestBody UserRequest request) {
 //        System.out.println(request);
+        // 这里是通过检查的用户
         User user = userService.login(request);
 
         // 保存用户

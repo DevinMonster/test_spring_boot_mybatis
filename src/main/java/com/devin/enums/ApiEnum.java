@@ -14,7 +14,8 @@ public enum ApiEnum {
     PASSWORD_NOT_MATCH(10002, "密码不匹配"),
     USERNAME_REGISTED(10003, "用户名已经存在"),
     VERIFYCODE_ERROR(10004, "验证码错误"),
-    USERNAME_PASSWORD_ERROR(10005, "用户名或密码错误");
+    USERNAME_PASSWORD_ERROR(10005, "用户名或密码错误"),
+    TOKEN_NOT_MATCH(600, "非法的TOKEN");
 
     private final Integer code;
     private final String message;

@@ -59,12 +59,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 验证码校验不通过
         if (code == null || !code.equalsIgnoreCase(request.getVerifyCode()))
             throw new GlobalException(ApiEnum.VERIFYCODE_ERROR);
+        // 删除验证码
         redisTemplate.delete(request.getKey());
         // 根据用户名查询用户
         User user = userMapper.selectByName(request.getUsername());
         if (!Utils.userCheck(user, request)) throw new GlobalException(ApiEnum.USERNAME_PASSWORD_ERROR);
         // 保存用户
-
         return user;
     }
 
